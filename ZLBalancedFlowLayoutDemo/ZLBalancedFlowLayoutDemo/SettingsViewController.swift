@@ -13,7 +13,7 @@ class SettingsViewController : UITableViewController {
     weak var demoViewController: ViewController?
 
     class func presentInViewController(viewController: ViewController) {
-        var settingsViewController = SettingsViewController(style: .Grouped)
+        let settingsViewController = SettingsViewController(style: .Grouped)
         settingsViewController.demoViewController = viewController
         viewController.presentViewController(UINavigationController(rootViewController: settingsViewController), animated: true, completion: nil)
     }
@@ -107,7 +107,7 @@ class SettingsViewController : UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cellIdentifier = String(format: "s%li-r%li", indexPath.section, indexPath.row)
+        let cellIdentifier = String(format: "s%li-r%li", indexPath.section, indexPath.row)
         var cell:UITableViewCell! = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as? UITableViewCell
         if cell==nil {
             cell = UITableViewCell(style: .Value1, reuseIdentifier: cellIdentifier)
@@ -118,7 +118,7 @@ class SettingsViewController : UITableViewController {
         case .Direction:
             switch SettingsTableViewControllerSection.DirectionRow(rawValue: indexPath.row)! {
             case .Direction:
-                var directionSwith = UISwitch()
+                let directionSwith = UISwitch()
                 directionSwith.addTarget(self, action: Selector("directionSwitchAction:"), forControlEvents: .ValueChanged)
                 if let demoViewController = demoViewController {
                     directionSwith.on = demoViewController.direction == .Vertical
@@ -131,7 +131,7 @@ class SettingsViewController : UITableViewController {
         case .RowHeight:
             switch SettingsTableViewControllerSection.RowHeightRow(rawValue: indexPath.row)! {
             case .RowHeight:
-                var slider = UISlider()
+                let slider = UISlider()
                 slider.addTarget(self, action: Selector("rowHeightSliderAction:"), forControlEvents: .ValueChanged)
                 if let demoViewController = demoViewController {
                     slider.value = Float((demoViewController.rowHeight-50)/100)
@@ -141,7 +141,7 @@ class SettingsViewController : UITableViewController {
                 cell.textLabel!.text = "Height"
                 rowHeightLabel = cell.detailTextLabel
             case .EnforcesRowHeight:
-                var enforceSwith = UISwitch()
+                let enforceSwith = UISwitch()
                 enforceSwith.addTarget(self, action: Selector("rowHeightSwitchAction:"), forControlEvents: .ValueChanged)
                 if let demoViewController = demoViewController {
                     enforceSwith.on = demoViewController.enforcesRowHeight
@@ -154,7 +154,7 @@ class SettingsViewController : UITableViewController {
         case .DataSource:
             switch SettingsTableViewControllerSection.DataSourceRow(rawValue: indexPath.row)! {
             case .NumSections:
-                var slider = UISlider()
+                let slider = UISlider()
                 slider.addTarget(self, action: Selector("numSectionsSliderAction:"), forControlEvents: .ValueChanged)
                 if let demoViewController = demoViewController {
                     slider.value = Float(demoViewController.numSections-1)/19.0
@@ -164,7 +164,7 @@ class SettingsViewController : UITableViewController {
                 cell.textLabel!.text = "# Sections"
                 numSectionsLabel = cell.detailTextLabel
             case .NumRepetitions:
-                var slider = UISlider()
+                let slider = UISlider()
                 slider.addTarget(self, action: Selector("numRepetitionsSliderAction:"), forControlEvents: .ValueChanged)
                 if let demoViewController = demoViewController {
                     slider.value = Float(demoViewController.numRepetitions-1)/19.0

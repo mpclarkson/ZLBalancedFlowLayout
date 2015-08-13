@@ -45,7 +45,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override init(collectionViewLayout layout: UICollectionViewLayout) {
         super.init(collectionViewLayout: layout)
         
-        var paths = NSBundle.mainBundle().pathsForResourcesOfType("jpg", inDirectory: "") as! Array<String>
+        let paths = NSBundle.mainBundle().pathsForResourcesOfType("jpg", inDirectory: "") 
         for path in paths {
             if let image = UIImage(contentsOfFile: path) {
                 images.append(image)
@@ -53,7 +53,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -80,7 +80,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         if needsResetLayout {
             needsResetLayout = false
             
-            var layout = ZLBalancedFlowLayout()
+            let layout = ZLBalancedFlowLayout()
             layout.headerReferenceSize = CGSize(width: 100, height: 100)
             layout.footerReferenceSize = CGSize(width: 100, height: 100)
             layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -111,8 +111,8 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        var cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellIdentifier, forIndexPath: indexPath) as! UICollectionViewCell
-        var imageView = UIImageView(image: imageForIndexPath(indexPath))
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellIdentifier, forIndexPath: indexPath) 
+        let imageView = UIImageView(image: imageForIndexPath(indexPath))
         imageView.contentMode = .ScaleAspectFill
         cell.backgroundView = imageView
         cell.clipsToBounds = true
@@ -136,8 +136,8 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     // MARK: - UICollectionViewDelegateFlowLayout
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        var size = imageForIndexPath(indexPath).size
-        var percentWidth = CGFloat(140 - arc4random_uniform(80))/100
+        let size = imageForIndexPath(indexPath).size
+        let percentWidth = CGFloat(140 - arc4random_uniform(80))/100
         return CGSize(width: size.width*percentWidth/4, height: size.height/4)
     }
     
