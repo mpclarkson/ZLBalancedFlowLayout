@@ -15,15 +15,15 @@ class LabelCollectionReusableView: UICollectionReusableView {
         super.init(frame: frame)
         setup()
     }
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
     }
     
     func setup() {
-        backgroundColor = UIColor.lightGrayColor()
-        textLabel.textColor = UIColor.blackColor()
-        textLabel.textAlignment = .Center
+        backgroundColor = UIColor.lightGray
+        textLabel.textColor = UIColor.black
+        textLabel.textAlignment = .center
         addSubview(textLabel)
     }
     

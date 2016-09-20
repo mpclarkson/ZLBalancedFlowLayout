@@ -21,7 +21,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    var direction: UICollectionViewScrollDirection = .Vertical {
+    var direction: UICollectionViewScrollDirection = .vertical {
         didSet {
             needsResetLayout = true
         }
@@ -39,13 +39,13 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
 
-    private var images = [UIImage](), needsResetLayout = false
-    private let cellIdentifier = "cell", headerIdentifier = "header", footerIdentifier = "footer"
+    fileprivate var images = [UIImage](), needsResetLayout = false
+    fileprivate let cellIdentifier = "cell", headerIdentifier = "header", footerIdentifier = "footer"
 
     override init(collectionViewLayout layout: UICollectionViewLayout) {
         super.init(collectionViewLayout: layout)
         
-        var paths = NSBundle.mainBundle().pathsForResourcesOfType("jpg", inDirectory: "") as! Array<String>
+        let paths = Bundle.main.paths(forResourcesOfType: "jpg", inDirectory: "") 
         for path in paths {
             if let image = UIImage(contentsOfFile: path) {
                 images.append(image)
@@ -62,25 +62,25 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         title = "ZLBalancedFlowLayout"
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self , action: Selector("refreshButtonAction:"))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .Plain, target: self, action: Selector("settingsButtonAction:"))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self , action: #selector(ViewController.refreshButtonAction(_:)))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(ViewController.settingsButtonAction(_:)))
 
-        collectionView?.backgroundColor = UIColor.whiteColor()
-        collectionView?.registerClass(UICollectionViewCell.classForCoder(), forCellWithReuseIdentifier: cellIdentifier)
-        collectionView?.registerClass(LabelCollectionReusableView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerIdentifier)
-        collectionView?.registerClass(LabelCollectionReusableView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: footerIdentifier)
+        collectionView?.backgroundColor = UIColor.white
+        collectionView?.register(UICollectionViewCell.classForCoder(), forCellWithReuseIdentifier: cellIdentifier)
+        collectionView?.register(LabelCollectionReusableView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerIdentifier)
+        collectionView?.register(LabelCollectionReusableView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: footerIdentifier)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         resetLayoutIfNeeded(animated)
     }
     
-    private func resetLayoutIfNeeded(animated: Bool) {
+    fileprivate func resetLayoutIfNeeded(_ animated: Bool) {
         if needsResetLayout {
             needsResetLayout = false
             
-            var layout = ZLBalancedFlowLayout()
+            let layout = ZLBalancedFlowLayout()
             layout.headerReferenceSize = CGSize(width: 100, height: 100)
             layout.footerReferenceSize = CGSize(width: 100, height: 100)
             layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -93,40 +93,40 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
 
     // MARK: - Action
-    func refreshButtonAction(sender:UIBarButtonItem) {
+    func refreshButtonAction(_ sender:UIBarButtonItem) {
         self.collectionView?.reloadData()
     }
     
-    func settingsButtonAction(sender:UIBarButtonItem) {
+    func settingsButtonAction(_ sender:UIBarButtonItem) {
         SettingsViewController.presentInViewController(self)
     }
     
     // MARK: - UICollectionViewDataSource
-    override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return numSections
     }
     
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count*numRepetitions
     }
     
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        var cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellIdentifier, forIndexPath: indexPath) as! UICollectionViewCell
-        var imageView = UIImageView(image: imageForIndexPath(indexPath))
-        imageView.contentMode = .ScaleAspectFill
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) 
+        let imageView = UIImageView(image: imageForIndexPath(indexPath))
+        imageView.contentMode = .scaleAspectFill
         cell.backgroundView = imageView
         cell.clipsToBounds = true
         return cell
     }
     
-    override func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-        var view = LabelCollectionReusableView(frame: CGRectZero)
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        var view = LabelCollectionReusableView(frame: CGRect.zero)
         switch (kind) {
         case UICollectionElementKindSectionHeader:
-            view = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: headerIdentifier, forIndexPath: indexPath) as! LabelCollectionReusableView
+            view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerIdentifier, for: indexPath) as! LabelCollectionReusableView
             view.textLabel.text = "Header"
         case UICollectionElementKindSectionFooter:
-            view = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: footerIdentifier, forIndexPath: indexPath) as! LabelCollectionReusableView
+            view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionFooter, withReuseIdentifier: footerIdentifier, for: indexPath) as! LabelCollectionReusableView
             view.textLabel.text = "Footer"
         default:
             view.textLabel.text = "N/A"
@@ -135,15 +135,15 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     // MARK: - UICollectionViewDelegateFlowLayout
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        var size = imageForIndexPath(indexPath).size
-        var percentWidth = CGFloat(140 - arc4random_uniform(80))/100
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = imageForIndexPath(indexPath).size
+        let percentWidth = CGFloat(UInt32(140) - arc4random_uniform(80))/100
         return CGSize(width: size.width*percentWidth/4, height: size.height/4)
     }
     
     // MARK: - ()
-    func imageForIndexPath(indexPath:NSIndexPath) -> UIImage {
-        return images[indexPath.item%images.count]
+    func imageForIndexPath(_ indexPath:IndexPath) -> UIImage {
+        return images[(indexPath as NSIndexPath).item%images.count]
     }
 }
 

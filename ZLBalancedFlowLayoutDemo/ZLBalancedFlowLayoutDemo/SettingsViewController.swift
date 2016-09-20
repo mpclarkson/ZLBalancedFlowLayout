@@ -12,17 +12,17 @@ class SettingsViewController : UITableViewController {
     
     weak var demoViewController: ViewController?
 
-    class func presentInViewController(viewController: ViewController) {
-        var settingsViewController = SettingsViewController(style: .Grouped)
+    class func presentInViewController(_ viewController: ViewController) {
+        let settingsViewController = SettingsViewController(style: .grouped)
         settingsViewController.demoViewController = viewController
-        viewController.presentViewController(UINavigationController(rootViewController: settingsViewController), animated: true, completion: nil)
+        viewController.present(UINavigationController(rootViewController: settingsViewController), animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "Settings"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done,  target: self, action: Selector("doneButtonAction:"))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,  target: self, action: #selector(SettingsViewController.doneButtonAction(_:)))
     }
     
     var rowHeightLabel: UILabel?
@@ -30,29 +30,29 @@ class SettingsViewController : UITableViewController {
     var numRepetitionLabel: UILabel?
 
     // MARK: - Action
-    func doneButtonAction(sender:UIBarButtonItem) {
-        dismissViewControllerAnimated(true, completion: nil)
+    func doneButtonAction(_ sender:UIBarButtonItem) {
+        dismiss(animated: true, completion: nil)
     }
     
-    func directionSwitchAction(sender:UISwitch) {
-        demoViewController?.direction = sender.on ? .Vertical : .Horizontal
+    func directionSwitchAction(_ sender:UISwitch) {
+        demoViewController?.direction = sender.isOn ? .vertical : .horizontal
     }
     
-    func rowHeightSliderAction(sender:UISlider) {
+    func rowHeightSliderAction(_ sender:UISlider) {
         demoViewController?.rowHeight = CGFloat(50 + sender.value * 100)
         rowHeightLabel?.text = "\(demoViewController!.rowHeight)"
     }
 
-    func rowHeightSwitchAction(sender:UISwitch) {
-        demoViewController?.enforcesRowHeight = sender.on
+    func rowHeightSwitchAction(_ sender:UISwitch) {
+        demoViewController?.enforcesRowHeight = sender.isOn
     }
 
-    func numSectionsSliderAction(sender:UISlider) {
+    func numSectionsSliderAction(_ sender:UISlider) {
         demoViewController?.numSections = Int(1 + sender.value * 19)
         numSectionsLabel?.text = "\(demoViewController!.numSections)"
     }
 
-    func numRepetitionsSliderAction(sender:UISlider) {
+    func numRepetitionsSliderAction(_ sender:UISlider) {
         demoViewController?.numRepetitions = Int(1 + sender.value * 19)
         numRepetitionLabel?.text = "\(demoViewController!.numRepetitions)"
     }
@@ -60,22 +60,22 @@ class SettingsViewController : UITableViewController {
     
     // MARK: - Cells
     enum SettingsTableViewControllerSection: Int {
-        case Direction, RowHeight, DataSource, Count
+        case direction, rowHeight, dataSource, count
         
         enum DirectionRow: Int {
-            case Direction, Count
+            case direction, count
         }
         
         enum RowHeightRow: Int {
-            case RowHeight, EnforcesRowHeight, Count
+            case rowHeight, enforcesRowHeight, count
         }
         
         enum DataSourceRow: Int {
-            case NumSections, NumRepetitions, Count
+            case numSections, numRepetitions, count
         }
         
-        static let sectionTitles = [Direction: "Scroll Direction", RowHeight: "Row Height", DataSource: ""]
-        static let sectionCount = [Direction: DirectionRow.Count.rawValue, RowHeight: RowHeightRow.Count.rawValue, DataSource: DataSourceRow.Count.rawValue, ];
+        static let sectionTitles = [direction: "Scroll Direction", rowHeight: "Row Height", dataSource: ""]
+        static let sectionCount = [direction: DirectionRow.count.rawValue, rowHeight: RowHeightRow.count.rawValue, dataSource: DataSourceRow.count.rawValue, ];
         
         func sectionHeaderTitle() -> String {
             if let sectionTitle = SettingsTableViewControllerSection.sectionTitles[self] {
@@ -94,45 +94,42 @@ class SettingsViewController : UITableViewController {
         }
     }
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return SettingsTableViewControllerSection.Count.rawValue
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return SettingsTableViewControllerSection.count.rawValue
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return SettingsTableViewControllerSection(rawValue:section)!.sectionRowCount()
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return SettingsTableViewControllerSection(rawValue:section)!.sectionHeaderTitle()
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cellIdentifier = String(format: "s%li-r%li", indexPath.section, indexPath.row)
-        var cell:UITableViewCell! = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as? UITableViewCell
-        if cell==nil {
-            cell = UITableViewCell(style: .Value1, reuseIdentifier: cellIdentifier)
-        }
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cellIdentifier = String(format: "s%li-r%li", (indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as UITableViewCell? ?? UITableViewCell(style: .value1, reuseIdentifier: cellIdentifier)
         
-        cell.selectionStyle = .None
-        switch SettingsTableViewControllerSection(rawValue:indexPath.section)! {
-        case .Direction:
-            switch SettingsTableViewControllerSection.DirectionRow(rawValue: indexPath.row)! {
-            case .Direction:
-                var directionSwith = UISwitch()
-                directionSwith.addTarget(self, action: Selector("directionSwitchAction:"), forControlEvents: .ValueChanged)
+        cell.selectionStyle = .none
+        switch SettingsTableViewControllerSection(rawValue:(indexPath as NSIndexPath).section)! {
+        case .direction:
+            switch SettingsTableViewControllerSection.DirectionRow(rawValue: (indexPath as NSIndexPath).row)! {
+            case .direction:
+                let directionSwith = UISwitch()
+                directionSwith.addTarget(self, action: #selector(SettingsViewController.directionSwitchAction(_:)), for: .valueChanged)
                 if let demoViewController = demoViewController {
-                    directionSwith.on = demoViewController.direction == .Vertical
+                    directionSwith.isOn = demoViewController.direction == .vertical
                 }
                 cell.accessoryView = directionSwith
                 cell.textLabel!.text = "Vertical"
             default:
                 cell.textLabel!.text = "Direction"
             }
-        case .RowHeight:
-            switch SettingsTableViewControllerSection.RowHeightRow(rawValue: indexPath.row)! {
-            case .RowHeight:
-                var slider = UISlider()
-                slider.addTarget(self, action: Selector("rowHeightSliderAction:"), forControlEvents: .ValueChanged)
+        case .rowHeight:
+            switch SettingsTableViewControllerSection.RowHeightRow(rawValue: (indexPath as NSIndexPath).row)! {
+            case .rowHeight:
+                let slider = UISlider()
+                slider.addTarget(self, action: #selector(SettingsViewController.rowHeightSliderAction(_:)), for: .valueChanged)
                 if let demoViewController = demoViewController {
                     slider.value = Float((demoViewController.rowHeight-50)/100)
                     cell.detailTextLabel!.text = "\(demoViewController.rowHeight)"
@@ -140,22 +137,22 @@ class SettingsViewController : UITableViewController {
                 cell.accessoryView = slider
                 cell.textLabel!.text = "Height"
                 rowHeightLabel = cell.detailTextLabel
-            case .EnforcesRowHeight:
-                var enforceSwith = UISwitch()
-                enforceSwith.addTarget(self, action: Selector("rowHeightSwitchAction:"), forControlEvents: .ValueChanged)
+            case .enforcesRowHeight:
+                let enforceSwith = UISwitch()
+                enforceSwith.addTarget(self, action: #selector(SettingsViewController.rowHeightSwitchAction(_:)), for: .valueChanged)
                 if let demoViewController = demoViewController {
-                    enforceSwith.on = demoViewController.enforcesRowHeight
+                    enforceSwith.isOn = demoViewController.enforcesRowHeight
                 }
                 cell.accessoryView = enforceSwith
                 cell.textLabel!.text = "Enforces Row Height"
             default:
                 cell.textLabel!.text = "RowHeight"
             }
-        case .DataSource:
-            switch SettingsTableViewControllerSection.DataSourceRow(rawValue: indexPath.row)! {
-            case .NumSections:
-                var slider = UISlider()
-                slider.addTarget(self, action: Selector("numSectionsSliderAction:"), forControlEvents: .ValueChanged)
+        case .dataSource:
+            switch SettingsTableViewControllerSection.DataSourceRow(rawValue: (indexPath as NSIndexPath).row)! {
+            case .numSections:
+                let slider = UISlider()
+                slider.addTarget(self, action: #selector(SettingsViewController.numSectionsSliderAction(_:)), for: .valueChanged)
                 if let demoViewController = demoViewController {
                     slider.value = Float(demoViewController.numSections-1)/19.0
                     cell.detailTextLabel!.text = "\(demoViewController.numSections)"
@@ -163,9 +160,9 @@ class SettingsViewController : UITableViewController {
                 cell.accessoryView = slider
                 cell.textLabel!.text = "# Sections"
                 numSectionsLabel = cell.detailTextLabel
-            case .NumRepetitions:
-                var slider = UISlider()
-                slider.addTarget(self, action: Selector("numRepetitionsSliderAction:"), forControlEvents: .ValueChanged)
+            case .numRepetitions:
+                let slider = UISlider()
+                slider.addTarget(self, action: #selector(SettingsViewController.numRepetitionsSliderAction(_:)), for: .valueChanged)
                 if let demoViewController = demoViewController {
                     slider.value = Float(demoViewController.numRepetitions-1)/19.0
                     cell.detailTextLabel!.text = "\(demoViewController.numRepetitions)"
